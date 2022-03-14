@@ -9,13 +9,11 @@ var message = document.getElementById("alert");
 //variables
 var x = canvas.width / 2;
 var y = canvas.height - 30;
-var speed = 3;
-var dx = (Math.random()*speed - speed/2)*speed;
-var dy = -speed;
-var ballRadius = 10;
+var speed = 10;
+var shipSize = 30;
 var score = 0;
 var lives = 3;
-
+var bullets = []; // list of bullets shot that are still on canvas.
 
 
 //keyboard
@@ -39,10 +37,46 @@ function drawLives() {
   ctx.fillText("Lives: " + lives, canvas.width - 85, 20);
 }
 
+function drawSpaceShip(x,y,size,fillColour){
+  // draw ship centered on xy
+  ctx.beginPath();
+  ctx.rect(x-size/2, y-size/2, size, size);
+  ctx.fillStyle = fillColour;
+  ctx.fill();
+  ctx.closePath();
+}
+
+function drawBullet(x,y,fillColour){
+  // draw ship centered on xy
+  ctx.beginPath();
+  ctx.rect(x, y, 2, 5);
+  ctx.fillStyle = fillColour;
+  ctx.fill();
+  ctx.closePath();
+}
+
+function fireBullet(){
+  // add a delay that prevents rapidfire bullets.
+  bullets.push({x: x, y: y, colour: "#0095DD" });
+}
+
+function drawBullets(){
+  // draws bullets after incrementing x value.
+  // if off top of screen remove them.
+  for(var i = 0; i < bullets.length; i++) {
+      bullets[i].y -= speed;
+      if (bullets[i].y <= 0) {
+        bullets.splice(i,1);
+      }else {
+        drawBullet(bullets[i].x, bullets[i].y, bullets[i].colour);
+    }
+  }
+}
+
 function mouseMoveHandler(e) {
   var relativeX = e.clientX - canvas.offsetLeft;
   if (relativeX > 0 && relativeX < canvas.width) {
-    paddleX = relativeX - paddleWidth / 2;
+    x = relativeX - speed / 4;
   }
 }
 
@@ -51,6 +85,9 @@ function keyDownHandler(e) {
     rightPressed = true;
   } else if (e.key == "Left" || e.key == "ArrowLeft") {
     leftPressed = true;
+  }
+  if (e.key === ' ' || e.key === 'Spacebar') {
+    fireBullet();
   }
 }
 
@@ -62,49 +99,22 @@ function keyUpHandler(e) {
   }
 }
 
-//collision dection
-function collisionDetection() {
-  for (var c = 0; c < brickColumnCount; c++) {
-    for (var r = 0; r < brickRowCount; r++) {
-      var b = bricks[c][r];
-      if (b.status == 1) {
-        if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
-          dy = -dy;
-          drawBrick(b.x, b.y, "#ff564a");
-          b.status = 0;
-          score++;
-          if (score == brickRowCount * brickColumnCount) {
-            message.innerHTML = "You Won!";
-            speed = 0;
-            dx = 0;
-            dy = 0;
-
-          }
-        }
-      }
-    }
-  }
-}
-
-
 
 // game loop
 function draw() {
-  //clear
+  // clear
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+  // main functions run each animation frame
   drawScore();
   drawLives();
+  drawSpaceShip(x,y,shipSize,"#0095DD");
+  drawBullets();
 
-
-  //move the ball
-  x += dx;
-  y += dy;
   // paddle movement logic
-  if (rightPressed) {
-
-  } else if (leftPressed) {
-
+  if (rightPressed && x < canvas.width) {
+    x += speed;
+  } else if (leftPressed && x > 0) {
+    x -= speed;
   }
   requestAnimationFrame(draw);
 
