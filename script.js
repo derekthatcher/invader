@@ -11,7 +11,7 @@ var alienCount = document.getElementById("aliens");
 //variables
 var x = canvas.width / 2;
 var y = canvas.height - 30;
-var speed = 10;
+var speed = 5;
 var shipSize = 30;
 var score = 0;
 var lives = 3;
@@ -59,7 +59,7 @@ function drawSpaceShip(x, y, size, fillColour) {
   ctx.closePath();
   ctx.beginPath(); //hull
   ctx.rect(x - size / 2, y - size / 2, size, size);
-  if (shipHit == 0){
+  if (shipHit == 0) {
     ctx.fillStyle = fillColour;
   } else {
     ctx.fillStyle = "#ff5555";
@@ -91,7 +91,7 @@ function drawBullet(x, y, fillColour) {
 }
 
 function fireBullet() {
-  // add a delay that prevents rapidfire bullets.
+  // add a delay that prevents rapidfire bullets?
   bullets.push({
     x: x,
     y: y,
@@ -140,7 +140,8 @@ function generateStars() {
     stars.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      colour: "#ffffff", size: Math.floor(Math.random()*3+1)
+      colour: "#ffffff",
+      size: Math.floor(Math.random() * 3 + 1)
     });
   }
 }
@@ -185,8 +186,8 @@ function drawAliens() {
 function generateAlien() {
   aliens.push({
     x: Math.random() * canvas.width,
-    y: 10,
-    colour: "#1bd40b",
+    y: 0,
+    colour: "rgb( "+ Math.floor(Math.random()*255) +", 255,0)",
     explode: 50
   });
 }
@@ -210,8 +211,8 @@ function checkForCollisions() {
       }
     }
     //check for colission with player spaceShip
-    if (aliens[a].y >= canvas.height - shipSize -30 && shipHit == 0) {
-      if ( aliens[a].x > x -shipSize && aliens[a].x < x + shipSize) {
+    if (aliens[a].y >= canvas.height - shipSize - 30 && shipHit == 0) {
+      if (aliens[a].x > x - shipSize && aliens[a].x < x + shipSize) {
         shipHit = 100;
         lives -= 1;
         score -= 10;
@@ -262,7 +263,12 @@ function draw() {
   alienCount.innerHTML = aliens.length;
   bulletCount.innerHTML = bullets.length;
   drawSpaceShip(x, y, shipSize, "#9a9da1");
-  if (Math.random() * 100 <= 1) {
+  var randomNumber = Math.random() * 100;
+  if (score < 500 && randomNumber <= 0.6) {
+    generateAlien();
+  } else if (score > 500 && randomNumber <= 2) {
+    generateAlien();
+  } else if (score > 1000 && randomNumber <= 3) {
     generateAlien();
   }
   // ship movement logic
@@ -271,12 +277,12 @@ function draw() {
   } else if (leftPressed && x > 0) {
     x -= speed;
   }
-  if(lives > 0){
+  if (lives > 0) {
     requestAnimationFrame(draw);
- }else {
-   drawLives();
-   message.innerHTML = "You Died!"
- }
+  } else {
+    drawLives();
+    message.innerHTML = "You Died!"
+  }
 
 }
 generateStars();
