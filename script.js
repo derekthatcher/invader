@@ -169,7 +169,7 @@ function drawAliens() {
 
 function generateAlien() {
   aliens.push({
-    x: Math.random() * canvas.width,
+    x: Math.random() * (canvas.width-10),
     y: 0,
     colour: "rgb( "+ Math.floor(Math.random()*255) +", 255,0)",
     explode: 50
