@@ -19,6 +19,10 @@ var shipHit = 0;
 var bullets = []; // list of bullets shot that are still on canvas.
 var stars = []; // list of stars that are still on canvas. need to randomly genertate or rotate
 var aliens = [];
+var img = new Image();
+img.src = "rocket.png"; //transparent png
+var imgHit = new Image();
+imgHit.src = "rocketHit.png"; //transparent png
 
 //keyboard
 var rightPressed = false;
@@ -43,42 +47,12 @@ function drawLives() {
 
 function drawSpaceShip(x, y, size, fillColour) {
   // draw ship centered on xy
-  ctx.beginPath(); //side bars
-  ctx.rect(x - 32, y, 64, 8);
-  ctx.fillStyle = "#9c2d1c";
-  ctx.fill();
-  ctx.closePath();
-  ctx.beginPath(); //side pod left
-  ctx.rect(x - 32, y - 8, 8, 30);
-  ctx.fillStyle = "#9c2d1c";
-  ctx.fill();
-  ctx.beginPath(); //side pod right
-  ctx.rect(x + 24, y - 8, 8, 30);
-  ctx.fillStyle = "#9c2d1c";
-  ctx.fill();
-  ctx.closePath();
-  ctx.beginPath(); //hull
-  ctx.rect(x - size / 2, y - size / 2, size, size);
-  if (shipHit == 0) {
-    ctx.fillStyle = fillColour;
-  } else {
-    ctx.fillStyle = "#ff5555";
-    shipHit -= 1;
-  }
-  ctx.fill();
-  ctx.closePath();
-
-  ctx.beginPath(); //point
-  ctx.rect(x - 4, y - size, 8, 15);
-  ctx.fillStyle = fillColour;
-  ctx.fill();
-  ctx.closePath();
-  ctx.beginPath(); //sub point
-  ctx.rect(x - 8, y - size + 8, 16, 8);
-  ctx.fillStyle = fillColour;
-  ctx.fill();
-  ctx.closePath();
-
+    if (shipHit == 0) {
+      ctx.drawImage(img, x - size / 2, y - size);
+    } else {
+      ctx.drawImage(imgHit, x - size / 2, y - size);
+      shipHit -= 1;
+    }
 }
 
 function drawBullet(x, y, fillColour) {
@@ -153,6 +127,16 @@ function drawAlien(x, y, fillColour) {
   ctx.fillStyle = fillColour;
   ctx.fill();
   ctx.closePath();
+  ctx.beginPath();
+  ctx.arc(x+5, y+5, 3, 0, Math.PI * 2);
+  ctx.fillStyle = "#112211";
+  ctx.fill();
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.arc(x+15, y+5, 3, 0, Math.PI * 2);
+  ctx.fillStyle = "#112211";
+  ctx.fill();
+  ctx.closePath();
 }
 
 function drawExlpodingAlien(x, y, radius) {
@@ -212,7 +196,7 @@ function checkForCollisions() {
     }
     //check for colission with player spaceShip
     if (aliens[a].y >= canvas.height - shipSize - 30 && shipHit == 0) {
-      if (aliens[a].x > x - shipSize && aliens[a].x < x + shipSize) {
+      if (aliens[a].x + 20 > x - shipSize/3 && aliens[a].x < x + shipSize/3) {
         shipHit = 100;
         lives -= 1;
         score -= 10;
