@@ -11,7 +11,7 @@ var alienCount = document.getElementById("aliens");
 //variables
 var x = canvas.width / 2;
 var y = canvas.height - 30;
-var speed = 5;
+var speed = 1;
 var shipSize = 30;
 var score = 0;
 var lives = 3;
@@ -23,6 +23,8 @@ var img = new Image();
 img.src = "rocket.png"; //transparent png
 var imgHit = new Image();
 imgHit.src = "rocketHit.png"; //transparent png
+var explosion = new Image();
+explosion.src = "explosion.png"; //transparent png
 
 //keyboard
 var rightPressed = false;
@@ -140,12 +142,11 @@ function drawAlien(x, y, fillColour) {
 }
 
 function drawExlpodingAlien(x, y, radius) {
-  // draw alien centered on xy
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, Math.PI * 2);
-  ctx.fillStyle = "rgb(" + 4 * radius + ",0,0)";
-  ctx.fill();
-  ctx.closePath();
+  // credit to explosions images https://opengameart.org/
+  //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+  var sHeight = 7-Math.floor((radius-1)/8);
+  var swidth = radius%8 == 0 ? 0 : radius%8;
+  ctx.drawImage(explosion, swidth * 100, sHeight * 100, 100, 80,x-13, y-25,50,50);
 }
 
 function drawAliens() {
@@ -157,7 +158,7 @@ function drawAliens() {
       aliens.splice(i, 1);
       score -= 2;
     } else {
-      if (aliens[i].explode == 50) {
+      if (aliens[i].explode == 64) {
         drawAlien(aliens[i].x, aliens[i].y, aliens[i].colour);
       } else {
         drawExlpodingAlien(aliens[i].x, aliens[i].y, aliens[i].explode);
@@ -172,7 +173,7 @@ function generateAlien() {
     x: Math.random() * (canvas.width-10),
     y: 0,
     colour: "rgb( "+ Math.floor(Math.random()*255) +", 255,0)",
-    explode: 50
+    explode: 64
   });
 }
 
