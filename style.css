@@ -13,8 +13,11 @@ canvas {
 #container {
   margin: 0 auto;
   text-align: center;
+  background-color: #444;
 }
-
+button {
+      background-color: #444;
+}
 #alert{
   margin: 10px;
 }

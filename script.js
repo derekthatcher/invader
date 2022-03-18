@@ -11,11 +11,13 @@ var alienCount = document.getElementById("aliens");
 //variables
 var x = canvas.width / 2;
 var y = canvas.height - 30;
-var speed = 1;
+var speed = 5;
+
 var shipSize = 30;
 var score = 0;
 var lives = 3;
 var shipHit = 0;
+var deathCount = -10;
 var bullets = []; // list of bullets shot that are still on canvas.
 var stars = []; // list of stars that are still on canvas. need to randomly genertate or rotate
 var aliens = [];
@@ -25,6 +27,8 @@ var imgHit = new Image();
 imgHit.src = "rocketHit.png"; //transparent png
 var explosion = new Image();
 explosion.src = "explosion.png"; //transparent png
+var alienShip = new Image();
+alienShip.src = "alien.png"; //transparent png
 
 //keyboard
 var rightPressed = false;
@@ -49,12 +53,18 @@ function drawLives() {
 
 function drawSpaceShip(x, y, size, fillColour) {
   // draw ship centered on xy
+   if (deathCount >= 0){
+     var sHeight = 7-Math.floor((deathCount-1)/8);
+     var swidth = deathCount%8 == 0 ? 0 : deathCount%8;
+     ctx.drawImage(explosion, swidth * 100, sHeight * 100, 100, 80, x-40, y-50, 100, 100);
+   }else {
     if (shipHit == 0) {
       ctx.drawImage(img, x - size / 2, y - size);
     } else {
       ctx.drawImage(imgHit, x - size / 2, y - size);
       shipHit -= 1;
     }
+  }
 }
 
 function drawBullet(x, y, fillColour) {
@@ -123,22 +133,9 @@ function generateStars() {
 }
 
 function drawAlien(x, y, fillColour) {
-  // draw alien centered on xy
-  ctx.beginPath();
-  ctx.rect(x, y, 20, 20);
-  ctx.fillStyle = fillColour;
-  ctx.fill();
-  ctx.closePath();
-  ctx.beginPath();
-  ctx.arc(x+5, y+5, 3, 0, Math.PI * 2);
-  ctx.fillStyle = "#112211";
-  ctx.fill();
-  ctx.closePath();
-  ctx.beginPath();
-  ctx.arc(x+15, y+5, 3, 0, Math.PI * 2);
-  ctx.fillStyle = "#112211";
-  ctx.fill();
-  ctx.closePath();
+  // draw alien xy
+  ctx.drawImage(alienShip, x, y);
+
 }
 
 function drawExlpodingAlien(x, y, radius) {
@@ -146,7 +143,7 @@ function drawExlpodingAlien(x, y, radius) {
   //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
   var sHeight = 7-Math.floor((radius-1)/8);
   var swidth = radius%8 == 0 ? 0 : radius%8;
-  ctx.drawImage(explosion, swidth * 100, sHeight * 100, 100, 80,x-13, y-25,50,50);
+  ctx.drawImage(explosion, swidth * 100, sHeight * 100, 100, 80, x-20, y-50, 100, 100);
 }
 
 function drawAliens() {
@@ -187,7 +184,7 @@ function checkForCollisions() {
   for (var a = 0; a < aliens.length; a++) {
     //check collisions with bullets
     for (var b = 0; b < bullets.length; b++) {
-      if (bullets[b].x > aliens[a].x && bullets[b].x + 3 < aliens[a].x + 20) {
+      if (bullets[b].x > aliens[a].x +5 && bullets[b].x + 3 < aliens[a].x + 45) {
         if (bullets[b].y > aliens[a].y && bullets[b].y + 10 < aliens[a].y + 20) {
           bullets.splice(b, 1); // delete bullet
           aliens[a].explode = 49;
@@ -201,6 +198,9 @@ function checkForCollisions() {
         shipHit = 100;
         lives -= 1;
         score -= 10;
+        if (lives == 0) {
+          deathCount = 64;
+        }
       }
     }
   }
@@ -264,8 +264,10 @@ function draw() {
   }
   if (lives > 0) {
     requestAnimationFrame(draw);
-  } else {
-    drawLives();
+  } else if (deathCount > 0){
+    deathCount -= 1;
+    requestAnimationFrame(draw);
+  }else {
     message.innerHTML = "You Died!"
   }
 
