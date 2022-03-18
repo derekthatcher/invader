@@ -78,7 +78,7 @@ function drawBullet(x, y, fillColour) {
 }
 
 function fireBullet() {
-  // add a delay that prevents rapidfire bullets?
+  // add a delay that prevents rapidfire bullets - 500 milliseconds
   let timeNow = +new Date;
   if(lastBullet + 500 < timeNow) {
     lastBullet = timeNow;
@@ -152,10 +152,12 @@ function drawExlpodingAlien(x, y, radius) {
 }
 
 function drawAliens() {
-  // draws aliens after incrementing x value.
+  // draws aliens after incrementing y value.
+  // could randomly change x?
   // if off bottom of screen remove them.
   for (var i = 0; i < aliens.length; i++) {
     aliens[i].y += 1;
+    aliens[i].x += Math.random() < 0.1 ? 1 : (Math.random() > 0.9 ? -1 : 0)
     if (aliens[i].y >= canvas.height || aliens[i].explode <= 0) {
       aliens.splice(i, 1);
       score -= 2;
