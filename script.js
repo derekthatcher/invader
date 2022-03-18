@@ -18,6 +18,7 @@ var score = 0;
 var lives = 3;
 var shipHit = 0;
 var deathCount = -10;
+var lastBullet = +new Date;
 var bullets = []; // list of bullets shot that are still on canvas.
 var stars = []; // list of stars that are still on canvas. need to randomly genertate or rotate
 var aliens = [];
@@ -78,12 +79,16 @@ function drawBullet(x, y, fillColour) {
 
 function fireBullet() {
   // add a delay that prevents rapidfire bullets?
-  bullets.push({
-    x: x,
-    y: y,
-    colour: "#fc033d"
-  });
-  score -= 1;
+  let timeNow = +new Date;
+  if(lastBullet + 500 < timeNow) {
+    lastBullet = timeNow;
+    bullets.push({
+      x: x,
+      y: y,
+      colour: "#fc033d"
+    });
+    score -= 1;
+}
 }
 
 function drawBullets() {
