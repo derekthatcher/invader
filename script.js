@@ -174,7 +174,7 @@ function drawAliens() {
 
 function generateAlien() {
   aliens.push({
-    x: Math.random() * (canvas.width-10),
+    x: Math.random() * (canvas.width-40),
     y: 0,
     colour: "rgb( "+ Math.floor(Math.random()*255) +", 255,0)",
     explode: 64
@@ -205,6 +205,7 @@ function checkForCollisions() {
         shipHit = 100;
         lives -= 1;
         score -= 10;
+        aliens[a].explode = 49;
         if (lives == 0) {
           deathCount = 64;
         }
